@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage ('docker login') {
+            steps {
+                sh 'echo dckr_pat_CRWs629s1SidfG9UTpe-nqQoUSM | /usr/local/bin/docker login -u chiraag77 --password-stdin'
+            }
+        }
+        stage ('docker build image') {
+            steps {
+                sh '/usr/local/bin/docker build -t chiraag77/chiraag_repo:myhttpd .'
+            }
+        }
+        stage ('docker push image') {
+            steps {
+                sh '/usr/local/bin/docker image push chiraag77/chiraag_repo:myhttpd'
+            }
+        }
+        stage ('docker create service') {
+            steps {
+                sh '/usr/local/bin/docker service create --name myservice --replicas 5 -p 9090:80 chiraag77/chiraag_repo:myhttpd'
+            }
+        }
+    }
+}
